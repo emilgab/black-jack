@@ -3,8 +3,9 @@ from random import shuffle
 import time
 
 class Player:
-    
-    # Class for the player with methods for checking balance, winning, loosing and draw
+    """
+    Class for the player, with methods for checking balance, winning, loosning and draw
+    """
     def __init__(self, name, balance, bet):
         self.name = name
         self.balance = balance
@@ -15,14 +16,14 @@ class Player:
         
     def playerWon(self):
         self.balance += self.bet
-        print(f"\nCongratulations, you won {self.bet}\nCurrent balance: {self.balance}\n")
+        print(f"\nCongratulations, you won {self.bet}\nCurrent balance for {self.name}: {self.balance}\n")
         
     def playerLost(self):
         self.balance -= self.bet
-        print(f"\nSo sorry, you lost {self.bet}\nCurrent balance: {self.balance}\n")
+        print(f"\nYou lost {self.bet}\nCurrent balance for {self.name}: {self.balance}\n")
         
     def playerPush(self):
-        print(f"\nEqual cards! It's a push!\nCurrent balance: {self.balance}\n")
+        print(f"\nEqual cards! It's a push!\nCurrent balance for {self.name}: {self.balance}\n")
         
 
 class Cards:
@@ -95,6 +96,10 @@ class Cards:
         return f"My cards: {the_deck}"
         
     def shuffle(self):
+        
+        """
+        Shuffles the deck of cards appending each card to a list and then using the shuffle-method from random
+        """
 
         # To get a fresh new deck at the start of each game, we clear the list of cards first.
         self.my_list_of_cards = []
@@ -106,11 +111,17 @@ class Cards:
         return self.my_list_of_cards
     
     def draw(self):
+        """
+        Returns a popped of item from the deck of cards
+        """
         
         # Pops off an return the first card in the deck
         return self.my_list_of_cards.pop(0)
     
     def cardValue(self, key):
+        """
+        Returns the value of any given card key
+        """
         
         # Returns the value of the card key
         return self.the_deck[key]
@@ -118,14 +129,15 @@ class Cards:
 # Begins by asking for the players name and assigns the classes
 player_name = ""
 while player_name == "":
-    player_name = input("What is your name? ")
+    player_name = input("\nWhat is your name? ")
 cards = Cards()
 account = Player(player_name, 1000, 0)
 
-def gamePlay():    
+def game_play():    
     """
     Function that starts the game of BlackJack
     """
+    print("\n"*80)
     print("Shuffles deck...")
     time.sleep(1)
     cards.shuffle()
@@ -140,8 +152,6 @@ def gamePlay():
     print("1...")
     time.sleep(1)
     print("\n"*100)
-    
-    aces = ["AS","AH","AD","AC"]
     
     players_cards = []
     player_score = 0
@@ -159,7 +169,7 @@ def gamePlay():
     dealer_score += cards.cardValue(dealers_cards[-1])
         
     print(f"{player_name}, you got {players_cards[0]} and {players_cards[1]}.")
-    
+    time.sleep(1)
     players_turn = True
     while (players_turn == True):
         if player_score > 21 and (("AS" in players_cards) or ("AH" in players_cards) or ("AD" in players_cards) or ("AC" in players_cards)):
@@ -176,19 +186,22 @@ def gamePlay():
             players_turn = False
         else:
             print(f"You now got {player_score}.")
+            print("---------------------")
             players_choice = input("What would you do? HIT to get a new card or STOP to stand? ")
             if players_choice.lower() == "hit":
                 players_cards.append(cards.draw())
                 player_score += cards.cardValue(players_cards[-1])
-                print(f"You got a {players_cards[-1]}!")
+                print(f"\nYou got a {players_cards[-1]}!")
             elif players_choice.lower() == "stop":
                 print(f"Alright, your score is {player_score}, dealers turn.")
                 players_turn = False
                 
+    time.sleep(1)
     if player_score > 21:
         print(f"Sorry. You got over 21, and you lost.")
         account.playerLost()
     else:
+        print("-------------------")
         print(f"The dealer has {dealers_cards[0]} and {dealers_cards[1]}")   
         dealers_turn = True
         while (dealers_turn == True):
@@ -204,15 +217,18 @@ def gamePlay():
                     dealers_cards.remove("AC")
                     
             print(f"The dealer has {dealer_score}.")
+            print("-------------------")
             
             if dealer_score < 17:
+                time.sleep(2)
                 print(f"The dealer has {dealer_score}, which is lower than 17, so he have to draw.")
                 dealers_cards.append(cards.draw())
                 dealer_score += cards.cardValue(players_cards[-1])
                 print(f"The dealer got {dealers_cards[-1]}, and has now {dealer_score}")
             elif dealer_score >= 17:
                 dealers_turn = False
-    
+                
+    time.sleep(2)
     if player_score > 21:
         pass
     elif (dealer_score > 21) and (player_score < 22):
@@ -227,16 +243,26 @@ def gamePlay():
             account.playerLost()
         elif player_score == dealer_score:
             print(f"Player has {player_score}, which is the same as the dealer {dealer_score}. It's a push!")
+            account.playerPush()
             
         
-    print("Thank you for playing!")
+    print("Thank you for playing!\n")
         
-def startGame():
+def start_game():
     """
     Function that starts the game, this would be a "welcome" screen.
     """
-    print(f"\nHello {player_name}! Welcome to this BlackJack game.")
-    print("\nYou can type in the following: \nPLAY starts the game.\nBALANCE checks how much money you have.\nHELP for info on how to play.\nCHANGE to change your name\nEXIT quits the program.\n")
+    
+    print("\n"*80)
+    print(f"\n~~~* Hello {player_name}! Welcome to this BlackJack game *~~~")
+    print("\nYou can type in the following:")
+    print("------------------------------")
+    print("PLAY: starts the game.")
+    print("BALANCE: checks how much money you have.")
+    print("HELP: for info on how to play.")
+    print("CHANGE: to change your name")
+    print("EXIT: quits the program.")
+    print("------------------------------\n")
     
     game_on = True
     while game_on == True:
@@ -244,7 +270,7 @@ def startGame():
         player_input = input("What do you want to do? ")
         
         if player_input.upper() == "PLAY":
-            gamePlay()
+            game_play()
             
         elif player_input.upper() == "BALANCE":
             print(account.checkBalance())
@@ -254,12 +280,12 @@ def startGame():
             pass
         
         elif player_input.upper() == "CHANGE":
-            account.name = input("What do you want to change your name to? ")
-            print(f"Cool, your new name is now {account.name}")
+            account.name = input("\nWhat do you want to change your name to? ")
+            print(f"\nCool, your new name is now {account.name}\n")
         
         elif player_input.upper() == "EXIT":
-            print("Thanks, have a nice day!")
+            print("\n~~~Thanks, have a nice day!~~~\n")
             game_on = False
     
 if __name__ == "__main__":
-    startGame()
+    start_game()
