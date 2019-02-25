@@ -141,8 +141,19 @@ def game_play():
     print("Shuffles deck...")
     time.sleep(1)
     cards.shuffle()
-    bet_in = int(input("Please place a bet: "))
-    account.bet = bet_in
+    while True:
+        
+        try:
+            bet_in = int(input("Please place a bet: "))
+            account.bet = bet_in 
+        except:
+            print("Sorry, incorrect input. Try again.")
+        else:
+            if bet_in > account.balance:
+                print("Sorry, not enough chips in your account.")
+            else:
+                break
+        
     print("Thanks for the bet. Let's draw your first two cards!")
     time.sleep(1)
     print("3...")
